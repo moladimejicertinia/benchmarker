@@ -5,6 +5,7 @@ import sinonChai from 'sinon-chai';
 import { generateValidAlerts } from '../../src/services/result/uiAlert';
 import * as env from '../../src/shared/env';
 import * as uiAlertInfo from '../../src/database/uiAlertInfo';
+import { buildKey } from '../../src/database/uiAlertInfo';
 
 import { UiTestResultDTO } from '../../src/database/uiTestResult';
 import { NORMAL, CRITICAL } from '../../src/shared/constants';
@@ -19,6 +20,8 @@ const MOCK_TEST_DTO_BASE: UiTestResultDTO = {
   salesforceLoadTime: 500,
   alertInfo: undefined,
 } as UiTestResultDTO;
+
+const MOCK_KEY = buildKey('ComponentLoadSuite', 'ComponentXLoadTime', false);
 
 describe('generateValidAlerts', () => {
   let sandbox: sinon.SinonSandbox;
@@ -109,13 +112,13 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
       };
       checkRecentStub.resolves(
-        new Set(['ComponentLoadSuite_ComponentXLoadTime'])
+        new Set([MOCK_KEY])
       );
       getAveragesStub.resolves(mockAverages);
 
@@ -131,7 +134,7 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -155,7 +158,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -175,7 +178,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 165;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -195,7 +198,7 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 185;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -224,7 +227,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 200;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        [MOCK_KEY]: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -246,7 +249,7 @@ describe('generateValidAlerts', () => {
 
     const avgNext10 = 175;
     const mockAverages = {
-      ['ComponentLoadSuite_ComponentXLoadTime']: {
+      [MOCK_KEY]: {
         avg_load_time_past_5_days: 200,
         avg_load_time_6_to_15_days_ago: avgNext10,
       },
@@ -271,6 +274,49 @@ describe('generateValidAlerts', () => {
     expect(results[0].alertType).to.equal(NORMAL);
     expect(results[0].componentLoadTimeDegraded).to.equal(25);
     expect(normalThresholdStub).to.not.have.been.called;
+  });
+
+  it('should set lwsEnabled on the generated alert from the DTO', async () => {
+    // Given
+    const lwsDto = {
+      ...MOCK_TEST_DTO_BASE,
+      lwsEnabled: true,
+    } as UiTestResultDTO;
+
+    const lwsKey = buildKey('ComponentLoadSuite', 'ComponentXLoadTime', true);
+    const mockAverages = {
+      [lwsKey]: {
+        avg_load_time_past_5_days: 200,
+        avg_load_time_6_to_15_days_ago: 100,
+      },
+    };
+    getAveragesStub.resolves(mockAverages);
+
+    // When
+    const results = await generateValidAlerts([lwsDto]);
+
+    // Then
+    expect(results).to.have.lengthOf(1);
+    expect(results[0].lwsEnabled).to.equal(true);
+    expect(results[0].alertType).to.equal(CRITICAL);
+  });
+
+  it('should default lwsEnabled to false when not provided in DTO', async () => {
+    // Given — MOCK_TEST_DTO_BASE has no lwsEnabled
+    const mockAverages = {
+      [MOCK_KEY]: {
+        avg_load_time_past_5_days: 200,
+        avg_load_time_6_to_15_days_ago: 100,
+      },
+    };
+    getAveragesStub.resolves(mockAverages);
+
+    // When
+    const results = await generateValidAlerts([MOCK_TEST_DTO_BASE]);
+
+    // Then
+    expect(results).to.have.lengthOf(1);
+    expect(results[0].lwsEnabled).to.equal(false);
   });
 
   it('should handle errors during average fetching and return an empty array, logging the error', async () => {

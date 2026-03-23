@@ -10,6 +10,7 @@ import {
 import {
   getAverageLimitValuesFromDB,
   checkRecentUiAlerts,
+  buildKey,
 } from '../../database/uiAlertInfo';
 import { UiAlert } from '../../database/entity/uiAlert';
 import { UiTestResultDTO } from '../../database/uiTestResult';
@@ -28,17 +29,19 @@ export async function generateValidAlerts(
   }
 
   try {
-    // Extract flow-action pairs
     const suiteAndTestNamePairs = needToStoreAlert.map(result => ({
       testSuiteName: result.testSuiteName,
       individualTestName: result.individualTestName,
+      lwsEnabled: result.lwsEnabled ?? false,
     }));
 
     const existingAlerts = await checkRecentUiAlerts(suiteAndTestNamePairs);
 
     const alertsToProcess = needToStoreAlert.filter(
       item =>
-        !existingAlerts.has(`${item.testSuiteName}_${item.individualTestName}`)
+        !existingAlerts.has(
+          buildKey(item.testSuiteName, item.individualTestName, item.lwsEnabled ?? false)
+        )
     );
 
     if (alertsToProcess.length === 0) {
@@ -79,9 +82,9 @@ async function addAlertByComparingAvg(
   const alert: UiAlert = new UiAlert();
   alert.testSuiteName = output.testSuiteName;
   alert.individualTestName = output.individualTestName;
+  alert.lwsEnabled = output.lwsEnabled ?? false;
 
-  // Construct the key for the current individualTestName and testSuiteName
-  const key = `${output.testSuiteName}_${output.individualTestName}`;
+  const key = buildKey(alert.testSuiteName, alert.individualTestName, alert.lwsEnabled);
 
   const averageResults = preFetchedAverages[key];
 
