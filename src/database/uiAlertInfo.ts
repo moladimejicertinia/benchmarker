@@ -14,7 +14,8 @@ export async function saveAlerts(
     const match = testResultsDB.find(
       result =>
         result.testSuiteName === alert.testSuiteName &&
-        result.individualTestName === alert.individualTestName
+        result.individualTestName === alert.individualTestName &&
+        result.lwsEnabled === alert.lwsEnabled
     );
     if (match) {
       alert.uiTestResultId = match.id;

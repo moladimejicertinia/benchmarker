@@ -313,12 +313,14 @@ describe('src/database/uiAlertInfo', () => {
       savedEntity.componentLoadTime = 10;
       savedEntity.salesforceLoadTime = 20;
       savedEntity.overallLoadTime = 30;
+      savedEntity.lwsEnabled = false;
 
       const alert: UiAlert = new UiAlert();
       alert.testSuiteName = savedEntity.testSuiteName;
       alert.individualTestName = savedEntity.individualTestName;
       alert.componentLoadTimeDegraded = 2;
       alert.alertType = 'normal';
+      alert.lwsEnabled = false;
       const results = [alert];
 
       // When
@@ -328,6 +330,37 @@ describe('src/database/uiAlertInfo', () => {
       expect(saveStub).to.be.calledOnce;
       expect(savedRecords).to.eql(results);
       expect(savedRecords[0].uiTestResultId).to.equal(1);
+    });
+
+    it('should not link alert to result with different lwsEnabled value', async () => {
+      // Given
+      const saveStub: sinon.SinonStub = sinon.stub().resolvesArg(0);
+      connectionStub.resolves({
+        manager: { save: saveStub },
+      } as unknown as DataSource);
+
+      const savedEntity = new UiTestResult();
+      savedEntity.id = 1;
+      savedEntity.testSuiteName = 'suite';
+      savedEntity.individualTestName = 'test';
+      savedEntity.componentLoadTime = 10;
+      savedEntity.salesforceLoadTime = 20;
+      savedEntity.overallLoadTime = 30;
+      savedEntity.lwsEnabled = false;
+
+      const alert: UiAlert = new UiAlert();
+      alert.testSuiteName = savedEntity.testSuiteName;
+      alert.individualTestName = savedEntity.individualTestName;
+      alert.componentLoadTimeDegraded = 2;
+      alert.alertType = 'normal';
+      alert.lwsEnabled = true;
+
+      // When
+      const savedRecords = await saveAlerts([savedEntity], [alert]);
+
+      // Then
+      expect(saveStub).to.be.calledOnce;
+      expect(savedRecords[0].uiTestResultId).to.not.equal(1);
     });
   });
 

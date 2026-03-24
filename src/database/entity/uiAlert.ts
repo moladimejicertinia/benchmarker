@@ -28,6 +28,9 @@ export class UiAlert extends PerformanceBaseEntity {
   @Column('integer', { nullable: true, name: 'component_load_time_degraded' })
   public componentLoadTimeDegraded = DEFAULT_NUMERIC_VALUE;
 
+  @Column('boolean', { nullable: false, default: false, name: 'lws_enabled' })
+  public lwsEnabled: boolean = false;
+
   public constructor() {
     super();
   }
