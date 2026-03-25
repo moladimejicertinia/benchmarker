@@ -124,6 +124,46 @@ describe('src/database/uiTestResult', () => {
       expect(alertInfoStub.args[0][1][0].alertType).to.equal('normal');
     });
 
+    it('should default lwsEnabled to false when not provided in DTO', async () => {
+      // Given
+      const dto: UiTestResultDTO = {
+        testSuiteName: 'suite',
+        individualTestName: 'test',
+        componentLoadTime: 10,
+        salesforceLoadTime: 20,
+        overallLoadTime: 30,
+      };
+
+      const savedEntity = new UiTestResult();
+      savedEntity.id = 1;
+      savedEntity.testSuiteName = 'suite';
+      savedEntity.individualTestName = 'test';
+      savedEntity.componentLoadTime = 10;
+      savedEntity.salesforceLoadTime = 20;
+      savedEntity.overallLoadTime = 30;
+      savedEntity.lwsEnabled = false;
+
+      saveRecordsStub.resolves([savedEntity]);
+      generateValidAlertsStub.resolves([]);
+
+      // When
+      const result = await saveUiTestResult([dto]);
+
+      // Then
+      const entityPassedToSave = saveRecordsStub.args[0][0][0] as UiTestResult;
+      expect(entityPassedToSave.lwsEnabled).to.equal(false);
+      expect(result).to.eql([
+        {
+          testSuiteName: 'suite',
+          individualTestName: 'test',
+          componentLoadTime: 10,
+          salesforceLoadTime: 20,
+          overallLoadTime: 30,
+          lwsEnabled: false,
+        },
+      ]);
+    });
+
     it('should preserve lwsEnabled=true through save and return', async () => {
       // Given
       const dto: UiTestResultDTO = {
