@@ -419,7 +419,16 @@ describe('src/database/uiTestResult', () => {
         },
       });
 
-      expect(result).to.have.lengthOf(1);
+      expect(result).to.eql([
+        {
+          testSuiteName: 'no-lws-filter-suite',
+          individualTestName: 'no-lws-filter-test',
+          componentLoadTime: 90,
+          salesforceLoadTime: 180,
+          overallLoadTime: 270,
+          lwsEnabled: true,
+        },
+      ]);
     });
 
     it('should return empty array when no matching records found within 30 days', async () => {
