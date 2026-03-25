@@ -344,6 +344,103 @@ describe('src/database/uiTestResult', () => {
       ]);
     });
 
+    it('should filter by lwsEnabled and include 30-day filter when provided', async () => {
+      // Given
+      const entity = new UiTestResult();
+      entity.id = 5;
+      entity.testSuiteName = 'lws-suite';
+      entity.individualTestName = 'lws-test';
+      entity.componentLoadTime = 60;
+      entity.salesforceLoadTime = 140;
+      entity.overallLoadTime = 220;
+      entity.lwsEnabled = true;
+
+      const findStub = sinon.stub().resolves([entity]);
+      connectionStub.resolves({
+        manager: { find: findStub },
+      } as unknown as DataSource);
+
+      const filterOptions: UiTestResultFilterOptions = {
+        lwsEnabled: true,
+      };
+
+      // When
+      const result = await loadUiTestResults(filterOptions);
+
+      // Then
+      expect(connectionStub).to.be.calledOnce;
+      expect(findStub).to.be.calledWith(UiTestResult, {
+        where: [
+          {
+            createDateTime: sinon.match.any,
+            lwsEnabled: true,
+          },
+        ],
+        order: {
+          createDateTime: 'DESC',
+        },
+      });
+
+      expect(result).to.eql([
+        {
+          testSuiteName: 'lws-suite',
+          individualTestName: 'lws-test',
+          componentLoadTime: 60,
+          salesforceLoadTime: 140,
+          overallLoadTime: 220,
+          lwsEnabled: true,
+        },
+      ]);
+    });
+
+    it('should not include lwsEnabled in where clause when not provided in filter', async () => {
+      // Given
+      const entity = new UiTestResult();
+      entity.id = 7;
+      entity.testSuiteName = 'no-lws-filter-suite';
+      entity.individualTestName = 'no-lws-filter-test';
+      entity.componentLoadTime = 90;
+      entity.salesforceLoadTime = 180;
+      entity.overallLoadTime = 270;
+      entity.lwsEnabled = true;
+
+      const findStub = sinon.stub().resolves([entity]);
+      connectionStub.resolves({
+        manager: { find: findStub },
+      } as unknown as DataSource);
+
+      const filterOptions: UiTestResultFilterOptions = {
+        testSuiteName: 'no-lws-filter-suite',
+      };
+
+      // When
+      const result = await loadUiTestResults(filterOptions);
+
+      // Then
+      expect(findStub).to.be.calledWith(UiTestResult, {
+        where: [
+          {
+            createDateTime: sinon.match.any,
+            testSuiteName: 'no-lws-filter-suite',
+          },
+        ],
+        order: {
+          createDateTime: 'DESC',
+        },
+      });
+
+      expect(result).to.eql([
+        {
+          testSuiteName: 'no-lws-filter-suite',
+          individualTestName: 'no-lws-filter-test',
+          componentLoadTime: 90,
+          salesforceLoadTime: 180,
+          overallLoadTime: 270,
+          lwsEnabled: true,
+        },
+      ]);
+    });
+
     it('should return empty array when no matching records found within 30 days', async () => {
       // Given
       const findStub = sinon.stub().resolves([]);
