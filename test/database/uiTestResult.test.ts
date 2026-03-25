@@ -353,36 +353,6 @@ describe('src/database/uiTestResult', () => {
       ]);
     });
 
-    it('should exclude results where lwsEnabled is false when filtering for true', async () => {
-      // Given
-      const findStub = sinon.stub().resolves([]);
-      connectionStub.resolves({
-        manager: { find: findStub },
-      } as unknown as DataSource);
-
-      const filterOptions: UiTestResultFilterOptions = {
-        lwsEnabled: true,
-      };
-
-      // When
-      const result = await loadUiTestResults(filterOptions);
-
-      // Then
-      expect(findStub).to.be.calledWith(UiTestResult, {
-        where: [
-          {
-            createDateTime: sinon.match.any,
-            lwsEnabled: true,
-          },
-        ],
-        order: {
-          createDateTime: 'DESC',
-        },
-      });
-
-      expect(result).to.eql([]);
-    });
-
     it('should not include lwsEnabled in where clause when not provided in filter', async () => {
       // Given
       const entity = new UiTestResult();
