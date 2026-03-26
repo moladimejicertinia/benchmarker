@@ -72,13 +72,11 @@ export async function getAverageLimitValuesFromDB(
 ) {
   const connection = await getConnection();
 
-  // Step 1: Find which test+lws combinations have enough history (>15 days old)
   const countResultMap = await fetchHistoryCounts(connection);
   if (countResultMap === null) {
     return {};
   }
 
-  // Step 2: Filter to only pairs that have historical data to compare against
   const pairsWithHistory = suiteAndTestNamePairs.filter(pair => {
     const countKey = `${pair.individualTestName}${KEY_DELIMITER}${pair.lwsEnabled}`;
     return countResultMap[countKey]?.count_older_than_15_days > 0;
@@ -88,7 +86,6 @@ export async function getAverageLimitValuesFromDB(
     return {};
   }
 
-  // Step 3: Fetch rolling averages for the qualifying pairs
   return fetchRollingAverages(connection, pairsWithHistory);
 }
 
