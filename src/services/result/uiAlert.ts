@@ -98,9 +98,10 @@ async function addAlertByComparingAvg(
     ?.uiAlertThresholds
     ? output.alertInfo.uiAlertThresholds.componentLoadTimeThresholdCritical
     : Number(getCriticalComponentLoadThreshold());
-  const componentLoadThresholdDegraded =
+  const componentLoadThresholdDegraded = Math.abs(
     averageResults.avg_load_time_past_5_days -
-    averageResults.avg_load_time_6_to_15_days_ago;
+      averageResults.avg_load_time_6_to_15_days_ago
+  );
 
   if (
     componentLoadThresholdDegraded >= normalComponentLoadThreshold &&
