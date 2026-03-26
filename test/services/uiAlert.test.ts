@@ -220,6 +220,23 @@ describe('generateValidAlerts', () => {
       expect(results).to.be.an('array').that.is.empty;
     });
 
+    it('should return NO alert when result is an improvement (recent avg is lower than historical avg)', async () => {
+      // Given
+      const mockAverages = {
+        ['ComponentLoadSuite_ComponentXLoadTime']: {
+          avg_load_time_past_5_days: 100,
+          avg_load_time_6_to_15_days_ago: 200,
+        },
+      };
+      getAveragesStub.resolves(mockAverages);
+
+      // When
+      const results = await generateValidAlerts([MOCK_TEST_DTO_BASE]);
+
+      // Then
+      expect(results).to.be.an('array').that.is.empty;
+    });
+
     it('should return NO alert if degradation is zero', async () => {
       //Given
       const avgNext10 = 200;
