@@ -221,7 +221,7 @@ describe('generateValidAlerts', () => {
     });
 
     it('should return NO alert when result is an improvement (recent avg is lower than historical avg)', async () => {
-      // Given - recent 5 days avg is LOWER (faster) than 6-15 days ago avg
+      // Given
       const mockAverages = {
         ['ComponentLoadSuite_ComponentXLoadTime']: {
           avg_load_time_past_5_days: 100,
