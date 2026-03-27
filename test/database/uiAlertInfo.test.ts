@@ -368,12 +368,24 @@ describe('src/database/uiAlertInfo', () => {
     it('should return a Set of keys for alerts found in the last 3 days', async () => {
       // Given
       const pairs = [
-        { testSuiteName: 'SuiteA', individualTestName: 'Test1' },
-        { testSuiteName: 'SuiteB', individualTestName: 'Test2' },
+        {
+          testSuiteName: 'SuiteA',
+          individualTestName: 'Test1',
+          lwsEnabled: false,
+        },
+        {
+          testSuiteName: 'SuiteB',
+          individualTestName: 'Test2',
+          lwsEnabled: false,
+        },
       ];
 
       const mockDbRows = [
-        { test_suite_name: 'SuiteA', individual_test_name: 'Test1' },
+        {
+          test_suite_name: 'SuiteA',
+          individual_test_name: 'Test1',
+          lws_enabled: false,
+        },
       ];
 
       mockQuery.resolves(mockDbRows);
@@ -387,13 +399,41 @@ describe('src/database/uiAlertInfo', () => {
       const sqlQuery = mockQuery.firstCall.args[0];
       expect(sqlQuery).to.include("INTERVAL '3 days'");
 
-      expect(sqlQuery).to.include("('SuiteA', 'Test1')");
-      expect(sqlQuery).to.include("('SuiteB', 'Test2')");
+      expect(sqlQuery).to.include("('SuiteA', 'Test1', 'false')");
+      expect(sqlQuery).to.include("('SuiteB', 'Test2', 'false')");
 
       expect(result).to.be.instanceOf(Set);
       expect(result.size).to.equal(1);
-      expect(result.has('SuiteA_Test1')).to.be.true;
-      expect(result.has('SuiteB_Test2')).to.be.false;
+      expect(result.has('SuiteA_Test1_false')).to.be.true;
+      expect(result.has('SuiteB_Test2_false')).to.be.false;
+    });
+
+    it('should not suppress an alert for lwsEnabled=false when an alert exists for lwsEnabled=true', async () => {
+      // Given
+      const pairs = [
+        {
+          testSuiteName: 'SuiteA',
+          individualTestName: 'Test1',
+          lwsEnabled: false,
+        },
+      ];
+
+      const mockDbRows = [
+        {
+          test_suite_name: 'SuiteA',
+          individual_test_name: 'Test1',
+          lws_enabled: true,
+        },
+      ];
+
+      mockQuery.resolves(mockDbRows);
+
+      // When
+      const result = await checkRecentUiAlerts(pairs);
+
+      // Then
+      expect(result.has('SuiteA_Test1_true')).to.be.true;
+      expect(result.has('SuiteA_Test1_false')).to.be.false;
     });
 
     it('should return an empty Set if no recent alerts are found', async () => {
@@ -402,7 +442,11 @@ describe('src/database/uiAlertInfo', () => {
 
       // When
       const result = await checkRecentUiAlerts([
-        { testSuiteName: 'SuiteA', individualTestName: 'Test1' },
+        {
+          testSuiteName: 'SuiteA',
+          individualTestName: 'Test1',
+          lwsEnabled: false,
+        },
       ]);
 
       // Then
@@ -417,7 +461,11 @@ describe('src/database/uiAlertInfo', () => {
 
       // When
       const result = await checkRecentUiAlerts([
-        { testSuiteName: 'SuiteA', individualTestName: 'Test1' },
+        {
+          testSuiteName: 'SuiteA',
+          individualTestName: 'Test1',
+          lwsEnabled: false,
+        },
       ]);
 
       // Then

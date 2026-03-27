@@ -8,6 +8,7 @@ import {
   getCriticalComponentLoadThreshold,
 } from '../../shared/env';
 import {
+  buildKey,
   getAverageLimitValuesFromDB,
   checkRecentUiAlerts,
 } from '../../database/uiAlertInfo';
@@ -32,13 +33,20 @@ export async function generateValidAlerts(
     const suiteAndTestNamePairs = needToStoreAlert.map(result => ({
       testSuiteName: result.testSuiteName,
       individualTestName: result.individualTestName,
+      lwsEnabled: result.lwsEnabled ?? false,
     }));
 
     const existingAlerts = await checkRecentUiAlerts(suiteAndTestNamePairs);
 
     const alertsToProcess = needToStoreAlert.filter(
       item =>
-        !existingAlerts.has(`${item.testSuiteName}_${item.individualTestName}`)
+        !existingAlerts.has(
+          buildKey(
+            item.testSuiteName,
+            item.individualTestName,
+            item.lwsEnabled ?? false
+          )
+        )
     );
 
     if (alertsToProcess.length === 0) {
