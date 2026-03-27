@@ -32,6 +32,7 @@ export async function generateValidAlerts(
     const suiteAndTestNamePairs = needToStoreAlert.map(result => ({
       testSuiteName: result.testSuiteName,
       individualTestName: result.individualTestName,
+      lwsEnabled: result.lwsEnabled ?? false,
     }));
 
     const existingAlerts = await checkRecentUiAlerts(suiteAndTestNamePairs);

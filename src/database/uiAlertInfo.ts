@@ -73,7 +73,7 @@ export async function getAverageLimitValuesFromDB(
   const connection = await getConnection();
 
   const countResultMap = await fetchHistoryCounts(connection);
-  if (countResultMap === null) {
+  if (!countResultMap || Object.keys(countResultMap).length === 0) {
     return {};
   }
 

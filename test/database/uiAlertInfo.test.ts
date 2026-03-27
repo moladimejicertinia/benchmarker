@@ -331,6 +331,72 @@ describe('src/database/uiAlertInfo', () => {
       expect(results).to.deep.equal({});
     });
 
+    it('fetchRollingAverages returns an empty object on error', async () => {
+      // Given
+      const suiteAndTestNamePairs: SuiteTestLwsPair[] = [
+        {
+          testSuiteName: 'suite1',
+          individualTestName: 'test1',
+          lwsEnabled: false,
+        },
+        {
+          testSuiteName: 'suite1',
+          individualTestName: 'test1',
+          lwsEnabled: true,
+        },
+      ];
+
+      const mockCountResults = [
+        {
+          individual_test_name: 'test1',
+          lws_enabled: false,
+          count_older_than_15_days: 10,
+        },
+        {
+          individual_test_name: 'test1',
+          lws_enabled: true,
+          count_older_than_15_days: 5,
+        },
+      ];
+
+      mockQuery.onFirstCall().resolves(mockCountResults);
+      const consoleStub = sinon.stub(console, 'error');
+      mockQuery.rejects(new Error('Connection failed'));
+
+      // When
+      const results = await getAverageLimitValuesFromDB(suiteAndTestNamePairs);
+
+      // Then
+      expect(results).to.deep.equal({});
+      expect(consoleStub).to.have.been.calledWith(
+        sinon.match('Error in fetching the average values: ')
+      );
+
+      consoleStub.restore();
+    });
+
+    it('should return {} when fetchHistoryCounts returns null', async () => {
+      // Given
+      mockQuery.onFirstCall().resolves(null);
+      const suiteAndTestNamePairs: SuiteTestLwsPair[] = [
+        {
+          testSuiteName: 'suite1',
+          individualTestName: 'test1',
+          lwsEnabled: false,
+        },
+        {
+          testSuiteName: 'suite1',
+          individualTestName: 'test1',
+          lwsEnabled: true,
+        },
+      ];
+
+      // When
+      const result = await getAverageLimitValuesFromDB(suiteAndTestNamePairs);
+
+      // Then
+      expect(result).to.deep.equal({});
+    });
     it('should scope by lwsEnabled so same test with different lwsEnabled values are separate', async () => {
       // Given
       const suiteAndTestNamePairs: SuiteTestLwsPair[] = [

@@ -202,6 +202,46 @@ describe('src/database/uiTestResult', () => {
         },
       ]);
     });
+
+    it('should convert DTO to entities, when component and salesforce load times are provided, default to zero', async () => {
+      // Given
+      const dto: UiTestResultDTO = {
+        testSuiteName: 'suite',
+        individualTestName: 'test',
+        overallLoadTime: 30,
+        lwsEnabled: false,
+      };
+
+      const savedEntity = new UiTestResult();
+      savedEntity.id = 1;
+      savedEntity.testSuiteName = 'suite';
+      savedEntity.individualTestName = 'test';
+      savedEntity.componentLoadTime = 0;
+      savedEntity.salesforceLoadTime = 0;
+      savedEntity.overallLoadTime = 30;
+      savedEntity.lwsEnabled = false;
+
+      saveRecordsStub.resolves([savedEntity]);
+      generateValidAlertsStub.resolves([]);
+
+      // When
+      const result = await saveUiTestResult([dto]);
+
+      // Then
+      expect(saveRecordsStub).to.be.calledOnce;
+      expect(result).to.eql([
+        {
+          testSuiteName: 'suite',
+          individualTestName: 'test',
+          componentLoadTime: 0,
+          salesforceLoadTime: 0,
+          overallLoadTime: 30,
+          lwsEnabled: false,
+        },
+      ]);
+      expect(generateValidAlertsStub).to.be.calledOnce;
+      expect(alertInfoStub).to.not.be.called;
+    });
   });
 
   describe('loadUiTestResults', () => {
