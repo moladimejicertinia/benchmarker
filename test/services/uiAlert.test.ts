@@ -152,7 +152,7 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -246,7 +246,7 @@ describe('generateValidAlerts', () => {
     it('should return NO alert when result is an improvement (recent avg is lower than historical avg)', async () => {
       // Given
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: 100,
           avg_load_time_6_to_15_days_ago: 200,
         },

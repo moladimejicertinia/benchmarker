@@ -11,7 +11,6 @@ import {
   buildKey,
   getAverageLimitValuesFromDB,
   checkRecentUiAlerts,
-  buildKey,
 } from '../../database/uiAlertInfo';
 import { UiAlert } from '../../database/entity/uiAlert';
 import { UiTestResultDTO } from '../../database/uiTestResult';

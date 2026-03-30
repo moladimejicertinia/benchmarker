@@ -586,10 +586,18 @@ describe('src/database/uiAlertInfo', () => {
       expect(mockQuery).to.have.been.calledOnce;
 
       const sqlQuery = mockQuery.firstCall.args[0];
+      const queryParams = mockQuery.firstCall.args[1];
       expect(sqlQuery).to.include("INTERVAL '3 days'");
 
-      expect(sqlQuery).to.include("('SuiteA', 'Test1', 'false')");
-      expect(sqlQuery).to.include("('SuiteB', 'Test2', 'false')");
+      expect(sqlQuery).to.include('($1, $2, $3), ($4, $5, $6)');
+      expect(queryParams).to.deep.equal([
+        'SuiteA',
+        'Test1',
+        false,
+        'SuiteB',
+        'Test2',
+        false,
+      ]);
 
       expect(result).to.be.instanceOf(Set);
       expect(result.size).to.equal(1);
