@@ -109,13 +109,13 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
       };
       checkRecentStub.resolves(
-        new Set(['ComponentLoadSuite_ComponentXLoadTime'])
+        new Set(['ComponentLoadSuite_ComponentXLoadTime_false'])
       );
       getAveragesStub.resolves(mockAverages);
 
@@ -131,7 +131,7 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -155,7 +155,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -175,7 +175,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 165;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -195,7 +195,7 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 185;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -241,7 +241,7 @@ describe('generateValidAlerts', () => {
       //Given
       const avgNext10 = 200;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
@@ -263,7 +263,7 @@ describe('generateValidAlerts', () => {
 
     const avgNext10 = 175;
     const mockAverages = {
-      ['ComponentLoadSuite_ComponentXLoadTime']: {
+      ['ComponentLoadSuite_ComponentXLoadTime_false']: {
         avg_load_time_past_5_days: 200,
         avg_load_time_6_to_15_days_ago: avgNext10,
       },
