@@ -11,6 +11,7 @@ import {
   buildKey,
   getAverageLimitValuesFromDB,
   checkRecentUiAlerts,
+  buildKey,
 } from '../../database/uiAlertInfo';
 import { UiAlert } from '../../database/entity/uiAlert';
 import { UiTestResultDTO } from '../../database/uiTestResult';
@@ -87,9 +88,14 @@ async function addAlertByComparingAvg(
   const alert: UiAlert = new UiAlert();
   alert.testSuiteName = output.testSuiteName;
   alert.individualTestName = output.individualTestName;
+  alert.lwsEnabled = output.lwsEnabled ?? false;
 
-  // Construct the key for the current individualTestName and testSuiteName
-  const key = `${output.testSuiteName}_${output.individualTestName}`;
+  // Construct the key for the current individualTestName and testSuiteName and lwsEnabled
+  const key = buildKey(
+    output.testSuiteName,
+    output.individualTestName,
+    output.lwsEnabled ?? false
+  );
 
   const averageResults = preFetchedAverages[key];
 

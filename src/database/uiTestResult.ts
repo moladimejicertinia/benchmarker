@@ -49,6 +49,7 @@ export interface UiTestResultDTO {
 export interface UiTestResultFilterOptions {
   testSuiteName?: string;
   individualTestName?: string;
+  lwsEnabled?: boolean;
 }
 
 /**
@@ -112,6 +113,9 @@ export async function loadUiTestResults(
     }
     if (filterOptions.individualTestName !== undefined) {
       whereClause.individualTestName = filterOptions.individualTestName;
+    }
+    if (filterOptions.lwsEnabled !== undefined) {
+      whereClause.lwsEnabled = filterOptions.lwsEnabled;
     }
   }
 
