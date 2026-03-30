@@ -89,7 +89,7 @@ async function addAlertByComparingAvg(
   alert.individualTestName = output.individualTestName;
   alert.lwsEnabled = output.lwsEnabled ?? false;
 
-  // Construct the key for the current individualTestName and testSuiteName
+  // Construct the key for the current individualTestName and testSuiteName and lwsEnabled
   const key = buildKey(
     output.testSuiteName,
     output.individualTestName,
