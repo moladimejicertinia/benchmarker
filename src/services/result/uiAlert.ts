@@ -10,6 +10,7 @@ import {
 import {
   getAverageLimitValuesFromDB,
   checkRecentUiAlerts,
+  buildKey,
 } from '../../database/uiAlertInfo';
 import { UiAlert } from '../../database/entity/uiAlert';
 import { UiTestResultDTO } from '../../database/uiTestResult';
@@ -39,7 +40,13 @@ export async function generateValidAlerts(
 
     const alertsToProcess = needToStoreAlert.filter(
       item =>
-        !existingAlerts.has(`${item.testSuiteName}_${item.individualTestName}`)
+        !existingAlerts.has(
+          buildKey(
+            item.testSuiteName,
+            item.individualTestName,
+            item.lwsEnabled ?? false
+          )
+        )
     );
 
     if (alertsToProcess.length === 0) {

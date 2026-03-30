@@ -109,13 +109,13 @@ describe('generateValidAlerts', () => {
       // Given
       const avgNext10 = 100;
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: avgFirst5,
           avg_load_time_6_to_15_days_ago: avgNext10,
         },
       };
       checkRecentStub.resolves(
-        new Set(['ComponentLoadSuite_ComponentXLoadTime'])
+        new Set(['ComponentLoadSuite_ComponentXLoadTime_false'])
       );
       getAveragesStub.resolves(mockAverages);
 

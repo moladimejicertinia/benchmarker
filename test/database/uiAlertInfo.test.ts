@@ -52,11 +52,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName1',
           lws_enabled: false,
           count_older_than_15_days: 20,
         },
         {
+          test_suite_name: 'testSuiteName2',
           individual_test_name: 'individualTestName2',
           lws_enabled: true,
           count_older_than_15_days: 18,
@@ -130,11 +132,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName1',
           lws_enabled: false,
           count_older_than_15_days: 20,
         },
         {
+          test_suite_name: 'testSuiteName2',
           individual_test_name: 'individualTestName2',
           lws_enabled: false,
           count_older_than_15_days: 0,
@@ -193,11 +197,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName1',
           lws_enabled: false,
           count_older_than_15_days: 0,
         },
         {
+          test_suite_name: 'testSuiteName2',
           individual_test_name: 'individualTestName2',
           lws_enabled: false,
           count_older_than_15_days: 0,
@@ -227,11 +233,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName1',
           lws_enabled: false,
           count_older_than_15_days: 20,
         },
         {
+          test_suite_name: 'testSuiteName2',
           individual_test_name: 'individualTestName2',
           lws_enabled: false,
           count_older_than_15_days: 18,
@@ -261,11 +269,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName1',
           lws_enabled: false,
           count_older_than_15_days: 20,
         },
         {
+          test_suite_name: 'testSuiteName1',
           individual_test_name: 'individualTestName2',
           lws_enabled: false,
           count_older_than_15_days: 18,
@@ -348,11 +358,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'suite1',
           individual_test_name: 'test1',
           lws_enabled: false,
           count_older_than_15_days: 10,
         },
         {
+          test_suite_name: 'suite1',
           individual_test_name: 'test1',
           lws_enabled: true,
           count_older_than_15_days: 5,
@@ -414,11 +426,13 @@ describe('src/database/uiAlertInfo', () => {
 
       const mockCountResults = [
         {
+          test_suite_name: 'suite1',
           individual_test_name: 'test1',
           lws_enabled: false,
           count_older_than_15_days: 10,
         },
         {
+          test_suite_name: 'suite1',
           individual_test_name: 'test1',
           lws_enabled: true,
           count_older_than_15_days: 5,

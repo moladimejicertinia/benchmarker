@@ -78,7 +78,11 @@ export async function getAverageLimitValuesFromDB(
   }
 
   const pairsWithHistory = suiteAndTestNamePairs.filter(pair => {
-    const countKey = `${pair.individualTestName}${KEY_DELIMITER}${pair.lwsEnabled}`;
+    const countKey = buildKey(
+      pair.testSuiteName,
+      pair.individualTestName,
+      pair.lwsEnabled
+    );
     return countResultMap[countKey]?.count_older_than_15_days > 0;
   });
 
@@ -93,17 +97,21 @@ async function fetchHistoryCounts(
   connection: any
 ): Promise<{ [key: string]: { count_older_than_15_days: number } } | null> {
   const countQuery = `
-    SELECT individual_test_name, lws_enabled,
+    SELECT individual_test_name, lws_enabled, test_suite_name,
       COUNT(create_date_time) AS count_older_than_15_days
     FROM performance.ui_test_result
     WHERE create_date_time <= CURRENT_DATE - INTERVAL '15 days'
-    GROUP BY individual_test_name, lws_enabled
+    GROUP BY individual_test_name, lws_enabled, test_suite_name
   `;
   try {
     const rows = await connection.query(countQuery);
     const map: { [key: string]: { count_older_than_15_days: number } } = {};
     for (const row of rows) {
-      const key = `${row.individual_test_name}${KEY_DELIMITER}${row.lws_enabled}`;
+      const key = buildKey(
+        row.test_suite_name,
+        row.individual_test_name,
+        row.lws_enabled
+      );
       map[key] = { count_older_than_15_days: row.count_older_than_15_days };
     }
     return map;
