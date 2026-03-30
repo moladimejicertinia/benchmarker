@@ -87,9 +87,14 @@ async function addAlertByComparingAvg(
   const alert: UiAlert = new UiAlert();
   alert.testSuiteName = output.testSuiteName;
   alert.individualTestName = output.individualTestName;
+  alert.lwsEnabled = output.lwsEnabled ?? false;
 
   // Construct the key for the current individualTestName and testSuiteName
-  const key = `${output.testSuiteName}_${output.individualTestName}`;
+  const key = buildKey(
+    output.testSuiteName,
+    output.individualTestName,
+    output.lwsEnabled ?? false
+  );
 
   const averageResults = preFetchedAverages[key];
 
