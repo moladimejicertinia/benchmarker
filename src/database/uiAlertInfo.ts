@@ -181,29 +181,34 @@ async function fetchRollingAverages(
 }
 
 export async function checkRecentUiAlerts(
-  suiteAndTestNamePairs: { testSuiteName: string; individualTestName: string }[]
+  suiteAndTestNamePairs: SuiteTestLwsPair[]
 ) {
   const connection = await getConnection();
-
-  const suiteAndTestNameConditions = suiteAndTestNamePairs
-    .map(pair => `('${pair.testSuiteName}', '${pair.individualTestName}')`)
-    .join(', ');
+  const { sql: tuplesSql, params } = buildTupleParams(suiteAndTestNamePairs);
 
   const query = `
-    SELECT test_suite_name, individual_test_name
+    SELECT test_suite_name, individual_test_name, lws_enabled
     FROM performance.ui_alert
     WHERE create_date_time >= CURRENT_DATE - INTERVAL '3 days'
-      AND (test_suite_name, individual_test_name) IN (${suiteAndTestNameConditions})
+      AND (test_suite_name, individual_test_name, lws_enabled) IN (${tuplesSql})
   `;
 
   const existingAlerts = new Set<string>();
 
   try {
-    const result = await connection.query(query);
+    const result = await connection.query(query, params);
     result.forEach(
-      (row: { test_suite_name: string; individual_test_name: string }) => {
+      (row: {
+        test_suite_name: string;
+        individual_test_name: string;
+        lws_enabled: boolean;
+      }) => {
         existingAlerts.add(
-          `${row.test_suite_name}_${row.individual_test_name}`
+          buildKey(
+            row.test_suite_name,
+            row.individual_test_name,
+            row.lws_enabled
+          )
         );
       }
     );

@@ -17,6 +17,7 @@ const MOCK_TEST_DTO_BASE: UiTestResultDTO = {
   overallLoadTime: 1000,
   componentLoadTime: 500,
   salesforceLoadTime: 500,
+  lwsEnabled: false,
   alertInfo: undefined,
 } as UiTestResultDTO;
 
@@ -146,6 +147,28 @@ describe('generateValidAlerts', () => {
       expect(results).to.have.lengthOf(1);
       expect(getAveragesStub).to.have.been.called;
     });
+
+    it('should not suppress an alert for lwsEnabled=false when a recent alert exists only for lwsEnabled=true', async () => {
+      // Given
+      const avgNext10 = 100;
+      const mockAverages = {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
+          avg_load_time_past_5_days: avgFirst5,
+          avg_load_time_6_to_15_days_ago: avgNext10,
+        },
+      };
+      checkRecentStub.resolves(
+        new Set(['ComponentLoadSuite_ComponentXLoadTime_true'])
+      );
+      getAveragesStub.resolves(mockAverages);
+
+      // When
+      const results = await generateValidAlerts([MOCK_TEST_DTO_BASE]);
+
+      // Then
+      expect(results).to.have.lengthOf(1);
+      expect(getAveragesStub).to.have.been.called;
+    });
   });
 
   describe('alert generation logic', () => {
@@ -223,7 +246,7 @@ describe('generateValidAlerts', () => {
     it('should return NO alert when result is an improvement (recent avg is lower than historical avg)', async () => {
       // Given
       const mockAverages = {
-        ['ComponentLoadSuite_ComponentXLoadTime']: {
+        ['ComponentLoadSuite_ComponentXLoadTime_false']: {
           avg_load_time_past_5_days: 100,
           avg_load_time_6_to_15_days_ago: 200,
         },
