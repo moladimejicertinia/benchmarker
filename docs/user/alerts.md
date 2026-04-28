@@ -115,7 +115,7 @@ Note: If the test level threshold is misconfigured below the average, you get an
 
 UI Alerts can be stored in the database to monitor performance degradation over time. Each record's degradation value represents the difference between the average component load time of the last 5 days and the average of the 6-to-15-days-ago window. Both windows use timestamp-based boundaries (not calendar days).
 
-A minimum of **3 runs** in the 6-to-15-day baseline window is required before an alert is considered. If either window has no data the comparison is skipped entirely — a missing baseline is never treated as zero.
+A minimum of **10 runs** in the 6-to-15-day baseline window is required before an alert is considered. If either window has no data the comparison is skipped entirely — a missing baseline is never treated as zero.
 
 ### Environment Variables
 
